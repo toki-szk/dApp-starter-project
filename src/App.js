@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import date from "date-and-time";
+
 /* ethers 変数を使えるようにする*/
 import { ethers } from "ethers";
 /* ABIファイルを含むWavePortal.jsonファイルをインポートする*/
@@ -14,7 +16,7 @@ const App = () => {
   const [allWaves, setAllWaves] = useState([]);
   console.log("currentAccount: ", currentAccount);
   /* デプロイされたコントラクトのアドレスを保持する変数を作成 */
-  const contractAddress = "0xcBEA1ce79526181C8eaFdF53e5181d5F5D831E5E";
+  const contractAddress = "0xa7f5062EB4593c4d68a76BAf4B03A72BbA5484d6";
   /* コントラクトからすべてのwavesを取得するメソッドを作成 */
   /* ABIの内容を参照する変数を作成 */
   const contractABI = abi.abi;
@@ -40,6 +42,7 @@ const App = () => {
             address: wave.waver,
             timestamp: new Date(wave.timestamp * 1000),
             message: wave.message,
+            isWon: wave.isWon,
           };
         });
         /* React Stateにデータを格納する */
@@ -227,6 +230,7 @@ const App = () => {
         {currentAccount && (
           <textarea
             name="messageArea"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             placeholder="メッセージはこちら"
             type="text"
             id="message"
@@ -240,20 +244,44 @@ const App = () => {
             .slice(0)
             .reverse()
             .map((wave, index) => {
-              return (
-                <div
-                  key={index}
-                  style={{
-                    backgroundColor: "#F8F8FF",
-                    marginTop: "16px",
-                    padding: "8px",
-                  }}
-                >
-                  <div>Address: {wave.address}</div>
-                  <div>Time: {wave.timestamp.toString()}</div>
-                  <div>Message: {wave.message}</div>
-                </div>
-              );
+              if (!wave.isWon) {
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      backgroundColor: "#F8F8FF",
+                      marginTop: "16px",
+                      padding: "8px",
+                    }}
+                  >
+                    <div>Address: {wave.address}</div>
+                    <div>
+                      Time:{" "}
+                      {date.format(wave.timestamp, "YYYY/MM/DD").toString()}
+                    </div>
+                    <div>Message: {wave.message}</div>
+                  </div>
+                );
+              } else {
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      backgroundColor: "#f1d606",
+                      marginTop: "16px",
+                      padding: "8px",
+                      color: "#fff",
+                    }}
+                  >
+                    <div>Address: {wave.address}</div>
+                    <div>
+                      Time:{" "}
+                      {date.format(wave.timestamp, "YYYY/MM/DD").toString()}
+                    </div>
+                    <div>Message: {wave.message}</div>
+                  </div>
+                );
+              }
             })}
       </div>
     </div>
